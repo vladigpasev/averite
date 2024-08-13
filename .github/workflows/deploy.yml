@@ -50,5 +50,5 @@ jobs:
             docker stop averite || true
             docker rm averite || true
             echo "Running the new Docker container"
-            docker run -d --name averite -p 80:3000 vladigpasev/averite:${{ github.sha }}
+            docker run -d --name averite -p 3000:3000 vladigpasev/averite:${{ github.sha }}
             echo "Deployment complete"
