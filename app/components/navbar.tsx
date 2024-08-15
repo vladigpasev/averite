@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaBars } from 'react-icons/fa';
 
 interface MenuItem {
@@ -49,6 +49,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items, isOpen }) => {
 
 const Navbar: React.FC = () => {
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
+    const [isScrolled, setIsScrolled] = useState<boolean>(false);
 
     const toggleMenu = (): void => {
         setMenuOpen(prevState => !prevState);
@@ -62,8 +63,24 @@ const Navbar: React.FC = () => {
         { name: 'КОНТАКТИ', link: '#' },
     ];
 
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
     return (
-        <nav className='md:px-36 py-5 px-4 sticky top-0 z-10'>
+        <nav className={`md:px-36 py-5 px-4 sticky top-0 z-10 transition-colors duration-300 ${isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'}`}>
             <div className='flex justify-between items-center'>
                 <div className='w-40'>
                     <img src="/logo.png" alt="Logo" />
