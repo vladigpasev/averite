@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        Exo2: ['Exo 2', 'serif'],
+        Jura: ['Jura', 'serif'],
+      },
       colors: {
         'primary-bg': '#f0ebe5',
         'secondary-bg': '#f1ece6',
