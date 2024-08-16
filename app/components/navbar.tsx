@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { FaBars } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 interface MenuItem {
     name: string;
@@ -50,6 +51,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items, isOpen }) => {
 const Navbar: React.FC = () => {
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
     const [isScrolled, setIsScrolled] = useState<boolean>(false);
+    const [lastScrollY, setLastScrollY] = useState<number>(0);
+    const [isVisible, setIsVisible] = useState<boolean>(true);
 
     const toggleMenu = (): void => {
         setMenuOpen(prevState => !prevState);
@@ -65,11 +68,18 @@ const Navbar: React.FC = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 50) {
-                setIsScrolled(true);
+            const currentScrollY = window.scrollY;
+            
+            if (currentScrollY > lastScrollY && currentScrollY > 50) {
+                // Скролваме надолу - скриваме навбара
+                setIsVisible(false);
             } else {
-                setIsScrolled(false);
+                // Скролваме нагоре - показваме навбара
+                setIsVisible(true);
             }
+
+            setLastScrollY(currentScrollY);
+            setIsScrolled(currentScrollY > 50);
         };
 
         window.addEventListener('scroll', handleScroll);
@@ -77,10 +87,15 @@ const Navbar: React.FC = () => {
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
-    }, []);
+    }, [lastScrollY]);
 
     return (
-        <nav className={`md:px-36 py-5 px-4 sticky top-0 z-50 transition-colors duration-300 ${isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'}`}>
+        <motion.nav
+            initial={{ y: 0 }}
+            animate={{ y: isVisible ? 0 : -480 }} // Анимираме по Y оста
+            transition={{ duration: 0.5 }}
+            className={`md:px-36 py-5 px-4 sticky top-0 z-50 transition-colors duration-300 ${isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'}`}
+        >
             <div className='flex justify-between items-center'>
                 <div className='w-40'>
                     <img src="/logo.png" alt="Logo" />
@@ -105,7 +120,7 @@ const Navbar: React.FC = () => {
                 </div>
             </div>
             <MobileMenu items={menuItems} isOpen={menuOpen} />
-        </nav>
+        </motion.nav>
     );
 };
 
