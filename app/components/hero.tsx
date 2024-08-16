@@ -5,12 +5,29 @@ import { defaultMotion, scaleMotion, rotateMotion } from '../utils/motionConfig'
 
 const Hero: React.FC = () => {
   return (
-    <motion.div {...defaultMotion} className="relative">
+    <motion.div {...defaultMotion} className="relative overflow-hidden pb-24">
       <div className="lg:px-40 md:px-32 sm:px-20 min-[450px]:px-14 px-10 md:py-20 sm:py-14 py-8">
         <div className="flex 2xl:flex-row flex-col 2xl:gap-16 gap-20 xl:items-center xl:justify-center">
           <TextSection />
           <ImageSection />
         </div>
+        <motion.div
+          className="absolute top-0 left-0 w-32 h-32 bg-red-500 opacity-75 rounded-full"
+          animate={{ scale: [1, 1.5, 1], rotate: [0, 360, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        ></motion.div>
+
+        <motion.div
+          className="absolute bottom-0 right-0 w-48 h-48 bg-blue-500 opacity-75 rounded-full"
+          animate={{ scale: [1, 0.5, 1], rotate: [0, -360, 0] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+        ></motion.div>
+
+        <motion.div
+          className="absolute top-[20%] right-[30%] w-24 h-24 bg-yellow-400 opacity-75 rotate-45"
+          animate={{ rotate: [0, 180, 360] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        ></motion.div>
       </div>
     </motion.div>
   );
@@ -18,7 +35,7 @@ const Hero: React.FC = () => {
 
 const TextSection: React.FC = () => {
   return (
-    <div className="flex flex-col lg:gap-7 md:gap-5 sm:gap-1">
+    <div className="flex flex-col lg:gap-7 md:gap-5 sm:gap-1 relative z-10">
       <motion.div
         {...scaleMotion}
         className="lg:text-4xl lg:text-[80px] md:text-6xl sm:text-5xl min-[450px]:text-4xl text-3xl text-[#d52621]"
@@ -50,10 +67,10 @@ const TextSection: React.FC = () => {
 
 const ImageSection: React.FC = () => {
   return (
-    <motion.div {...rotateMotion} className="relative">
+    <motion.div {...rotateMotion} className="relative z-10">
       <div className="absolute lg:w-[400px] lg:h-[400px] md:w-[350px] md:h-[350px] sm:w-[250px] sm:h-[250px] bg-[#d52621] rounded-full bottom-[-100px] left-[-100px] z-[-1] transform rotate-45"></div>
       <img
-        src="https://media.discordapp.net/attachments/1266889333269336196/1273362095219539978/comica1723132630794.jpg?ex=66beff1d&is=66bdad9d&hm=c881b003777e1f48d52f3d066442433dc5818b7bcd6d95b9e42b293487806e44&=&format=webp&width=1402&height=1402"
+        src="https://cdn.discordapp.com/attachments/1270389492628459571/1273756825677991998/Untitled_image.jpeg?ex=66c06ebc&is=66bf1d3c&hm=f13d26b43f5e75ed995ea79c7a2a69a6b8d4361ecbf0e3a0c13f0efe7abd1a81&"
         alt="Our Story Image"
         className="rounded-lg shadow-2xl transform rotate-6 hover:rotate-0 transition-transform duration-500 ease-in-out"
       />

@@ -80,7 +80,7 @@ const Navbar: React.FC = () => {
     }, []);
 
     return (
-        <nav className={`md:px-36 py-5 px-4 sticky top-0 z-10 transition-colors duration-300 ${isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'}`}>
+        <nav className={`md:px-36 py-5 px-4 sticky top-0 z-50 transition-colors duration-300 ${isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'}`}>
             <div className='flex justify-between items-center'>
                 <div className='w-40'>
                     <img src="/logo.png" alt="Logo" />
