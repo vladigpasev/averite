@@ -6,6 +6,7 @@ import { faChevronLeft, faChevronRight, faTimes } from "@fortawesome/free-solid-
 import useIntersectionObserver from "../hooks/useIntersectionObserver";
 import useBackgroundColorOnScroll from "../hooks/useBackgroundColorOnScroll";
 import { images, variants, descriptionVariants, fancyShapesVariants, Image } from "../data/constants";
+import YouTube from "react-youtube";
 
 const ImageCarousel: React.FC<{
     images: Image[];
@@ -37,13 +38,10 @@ const ImageCarousel: React.FC<{
                     <img
                         src={images[currentImageIndex].src}
                         alt={images[currentImageIndex].alt}
-                        className={`w-full h-full object-cover rounded-lg p-5 ${
-                            images[currentImageIndex].rotate ? "rotate-90" : ""
-                        }`}
+                        className={`w-full h-full object-cover rounded-lg p-5 ${images[currentImageIndex].rotate ? "rotate-90" : ""}`}
                     />
                 </motion.div>
             </AnimatePresence>
-
         </div>
         <button
             className="absolute right-0 text-4xl bg-white text-red-500 p-4 rounded-full z-20 mr-5"
@@ -55,7 +53,6 @@ const ImageCarousel: React.FC<{
     </div>
 );
 
-// Main Component
 const WhoWeAre: React.FC = () => {
     const [[page, direction], setPage] = useState<[number, number]>([0, 0]);
     const sectionRefFirst = useRef<HTMLDivElement | null>(null);
@@ -73,35 +70,21 @@ const WhoWeAre: React.FC = () => {
 
     const imageIndex = (page + images.length) % images.length;
 
+    const opts = {
+        height: '360',
+        width: '640',
+        playerVars: {
+            autoplay: 1,
+        },
+    };
+
     return (
         <div>
-            {/* First section */}
             <div
                 ref={sectionRefFirst}
                 className="relative text-white py-20 flex flex-col items-center justify-center overflow-hidden transition-colors duration-500 ease-in-out pb-60"
                 style={{ backgroundColor: bgDarkness }}
             >
-                <motion.div
-                    className="absolute bottom-10 left-10 w-12 h-12 bg-purple-400 rounded-full"
-                    variants={fancyShapesVariants}
-                    initial="initial"
-                    animate="animate"
-                    style={{ willChange: "transform" }}
-                />
-                <motion.div
-                    className="absolute bottom-10 right-20 w-16 h-16 bg-green-400 rounded-lg"
-                    variants={fancyShapesVariants}
-                    initial="initial"
-                    animate="animate"
-                    style={{ willChange: "transform" }}
-                />
-                <motion.div
-                    className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-10 h-10 bg-yellow-400 rounded-full"
-                    variants={fancyShapesVariants}
-                    initial="initial"
-                    animate="animate"
-                    style={{ willChange: "transform" }}
-                />
                 <motion.h2
                     className="text-5xl font-bold mb-12 z-10"
                     initial={{ opacity: 0, y: 50 }}
@@ -118,7 +101,6 @@ const WhoWeAre: React.FC = () => {
                     direction={direction}
                     inView={inViewFirst}
                 />
-
                 <div className="relative mt-8 max-w-3xl w-full z-10 px-5">
                     <AnimatePresence mode="wait">
                         <motion.div
@@ -134,34 +116,11 @@ const WhoWeAre: React.FC = () => {
                     </AnimatePresence>
                 </div>
             </div>
-
-            {/* Second section */}
             <div
                 ref={sectionRefSecond}
                 className="relative text-white py-20 flex flex-col items-center justify-center overflow-hidden transition-colors duration-500 ease-in-out min-h-[100vh]"
                 style={{ backgroundColor: bgDarkness }}
             >
-                <motion.div
-                    className="absolute top-10 left-10 w-14 h-14 bg-red-400 rounded-full"
-                    variants={fancyShapesVariants}
-                    initial="initial"
-                    animate="animate"
-                    style={{ willChange: "transform" }}
-                />
-                <motion.div
-                    className="absolute top-10 right-20 w-20 h-20 bg-blue-400 rounded-lg"
-                    variants={fancyShapesVariants}
-                    initial="initial"
-                    animate="animate"
-                    style={{ willChange: "transform" }}
-                />
-                <motion.div
-                    className="absolute top-20 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-pink-400 rounded-full"
-                    variants={fancyShapesVariants}
-                    initial="initial"
-                    animate="animate"
-                    style={{ willChange: "transform" }}
-                />
                 <motion.h2
                     className="text-5xl font-bold mb-8 text-center"
                     initial={{ opacity: 0, y: -50 }}
@@ -178,27 +137,6 @@ const WhoWeAre: React.FC = () => {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 1.5, delay: 0.5 }}
                     >
-                        {/* Film Strips */}
-                        <div className="absolute left-0 top-0 bottom-0 w-20 flex items-center">
-                            <div className="bg-black w-full h-full flex flex-col justify-around items-center">
-                                <div className="bg-white w-8 h-12 rounded"></div>
-                                <div className="bg-white w-8 h-12 rounded"></div>
-                                <div className="bg-white w-8 h-12 rounded"></div>
-                                <div className="bg-white w-8 h-12 rounded"></div>
-                                <div className="bg-white w-8 h-12 rounded"></div>
-                            </div>
-                        </div>
-
-                        <div className="absolute right-0 top-0 bottom-0 w-20 flex items-center">
-                            <div className="bg-black w-full h-full flex flex-col justify-around items-center">
-                                <div className="bg-white w-8 h-12 rounded"></div>
-                                <div className="bg-white w-8 h-12 rounded"></div>
-                                <div className="bg-white w-8 h-12 rounded"></div>
-                                <div className="bg-white w-8 h-12 rounded"></div>
-                                <div className="bg-white w-8 h-12 rounded"></div>
-                            </div>
-                        </div>
-
                         {/* Video Thumbnail */}
                         <div className="relative cursor-pointer z-10 px-20" onClick={() => setShowVideo(true)}>
                             <img
@@ -249,12 +187,7 @@ const WhoWeAre: React.FC = () => {
                                 >
                                     <FontAwesomeIcon icon={faTimes} />
                                 </button>
-                                <video
-                                    src="/trailer.mp4"
-                                    controls
-                                    autoPlay
-                                    className="w-full max-w-4xl rounded-lg"
-                                />
+                                <YouTube videoId="wTNlWQP6Jtk" opts={opts} className="w-full max-w-4xl rounded-lg" />
                             </div>
                         </motion.div>
                     )}
