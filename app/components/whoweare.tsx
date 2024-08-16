@@ -1,168 +1,61 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight, faTimes } from "@fortawesome/free-solid-svg-icons";
+import useIntersectionObserver from "../hooks/useIntersectionObserver";
+import useBackgroundColorOnScroll from "../hooks/useBackgroundColorOnScroll";
+import { images, variants, descriptionVariants, fancyShapesVariants, Image } from "../data/constants";
 
-// Types
-interface Image {
-    id: number;
-    src: string;
-    alt: string;
-    description: string;
-}
+const ImageCarousel: React.FC<{
+    images: Image[];
+    currentImageIndex: number;
+    paginate: (direction: number) => void;
+    direction: number;
+    inView: boolean;
+}> = ({ images, currentImageIndex, paginate, direction, inView }) => (
+    <div className="relative w-full max-w-4xl flex justify-center items-center z-10">
+        <button
+            className="absolute left-0 text-4xl bg-white text-red-500 p-4 rounded-full z-20 ml-5"
+            onClick={() => paginate(-1)}
+            aria-label="Previous Image"
+        >
+            <FontAwesomeIcon icon={faChevronLeft} />
+        </button>
+        <div className="relative w-[400px] h-[400px]">
+            <AnimatePresence initial={false} custom={direction}>
+                <motion.div
+                    key={images[currentImageIndex].id}
+                    className="absolute w-full h-full"
+                    custom={direction}
+                    variants={variants}
+                    initial="enter"
+                    animate={inView ? "center" : "enter"}
+                    exit="exit"
+                    style={{ position: "absolute", top: 0, left: 0 }}
+                >
+                    <img
+                        src={images[currentImageIndex].src}
+                        alt={images[currentImageIndex].alt}
+                        className={`w-full h-full object-cover rounded-lg p-5 ${
+                            images[currentImageIndex].rotate ? "rotate-90" : ""
+                        }`}
+                    />
+                </motion.div>
+            </AnimatePresence>
 
-const images: Image[] = [
-    {
-        id: 0,
-        src: "/vladimir.png",
-        alt: "Aver1 Snimka",
-        description:
-            "Това е VLAD-CODER. Той има изключителната възможност да се фокусира и изолира проблемите си, решавайки ги един по един.",
-    },
-    {
-        id: 1,
-        src: "/alexandar.png",
-        alt: "Aver2 Snimka",
-        description: "Това е SUPER-Dzhadzhi! Той слуша.",
-    },
-    {
-        id: 2,
-        src: "/martin.png",
-        alt: "Aver3 Snimka",
-        description: "Информация 3",
-    },
-];
+        </div>
+        <button
+            className="absolute right-0 text-4xl bg-white text-red-500 p-4 rounded-full z-20 mr-5"
+            onClick={() => paginate(1)}
+            aria-label="Next Image"
+        >
+            <FontAwesomeIcon icon={faChevronRight} />
+        </button>
+    </div>
+);
 
-// Custom Hook: Intersection Observer
-const useIntersectionObserver = (
-    ref: React.RefObject<HTMLElement>,
-    threshold = 0.1
-): boolean => {
-    const [inView, setInView] = useState(false);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                setInView(entry.isIntersecting);
-            },
-            { threshold }
-        );
-
-        if (ref.current) {
-            observer.observe(ref.current);
-        }
-
-        return () => {
-            if (ref.current) {
-                observer.unobserve(ref.current);
-            }
-        };
-    }, [ref, threshold]);
-
-    return inView;
-};
-
-// Custom Hook: Background Color based on Scroll
-const useBackgroundColorOnScroll = (
-    ref: React.RefObject<HTMLElement>,
-    initialColor: string,
-    scrollThreshold: number
-): string => {
-    const [bgColor, setBgColor] = useState(initialColor);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (ref.current) {
-                const sectionTop = ref.current.getBoundingClientRect().top;
-                const sectionHeight = ref.current.offsetHeight;
-                const windowHeight = window.innerHeight;
-
-                const scrollAmount = windowHeight - sectionTop;
-                if (scrollAmount > scrollThreshold) {
-                    const darkeningFactor = Math.min(
-                        1,
-                        (scrollAmount - scrollThreshold) / (sectionHeight / 2)
-                    );
-                    const newColor = `rgb(${Math.max(0, 213 - darkeningFactor * 213)}, ${Math.max(0, 38 - darkeningFactor * 38)}, ${Math.max(0, 33 - darkeningFactor * 33)})`;
-                    setBgColor(newColor);
-                } else {
-                    setBgColor(initialColor);
-                }
-            }
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, [ref, scrollThreshold, initialColor]);
-
-    return bgColor;
-};
-
-// Variants and Animation Configurations
-const variants = {
-    enter: (direction: number) => ({
-        x: direction > 0 ? 1000 : -1000,
-        scale: 0.5,
-        opacity: 0,
-    }),
-    center: {
-        zIndex: 1,
-        x: 0,
-        scale: 1,
-        opacity: 1,
-        transition: {
-            duration: 0.8,
-        },
-    },
-    exit: (direction: number) => ({
-        zIndex: 0,
-        x: direction < 0 ? 1000 : -1000,
-        scale: 0.5,
-        opacity: 0,
-        transition: {
-            duration: 0.8,
-        },
-    }),
-};
-
-const descriptionVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.6 } },
-};
-
-const backgroundShapesVariants = {
-    initial: { opacity: 0, scale: 0, rotate: 0 },
-    animate: {
-        opacity: 0.3,
-        scale: [1, 1.2, 1],
-        rotate: [0, 360],
-        transition: {
-            repeat: Infinity,
-            repeatType: "reverse" as const,
-            duration: 15,
-        },
-    },
-};
-
-// Fancy shapes animation
-const fancyShapesVariants = {
-    initial: { opacity: 0, scale: 0 },
-    animate: {
-        opacity: 0.8,
-        scale: [1, 1.5, 1],
-        rotate: [0, 360],
-        transition: {
-            repeat: Infinity,
-            repeatType: "mirror" as const,
-            duration: 10,
-        },
-    },
-};
-
+// Main Component
 const WhoWeAre: React.FC = () => {
     const [[page, direction], setPage] = useState<[number, number]>([0, 0]);
     const sectionRefFirst = useRef<HTMLDivElement | null>(null);
@@ -174,18 +67,11 @@ const WhoWeAre: React.FC = () => {
     const bgDarkness = useBackgroundColorOnScroll(sectionRefFirst, "rgb(213, 38, 33)", 1000);
 
     const paginate = useCallback(
-        (newDirection: number) => {
-            setPage([page + newDirection, newDirection]);
-        },
+        (newDirection: number) => setPage([page + newDirection, newDirection]),
         [page]
     );
 
-    const imageIndex = useCallback(
-        (page: number) => (page + images.length) % images.length,
-        []
-    );
-
-    const currentImageIndex = imageIndex(page);
+    const imageIndex = (page + images.length) % images.length;
 
     return (
         <div>
@@ -195,26 +81,27 @@ const WhoWeAre: React.FC = () => {
                 className="relative text-white py-20 flex flex-col items-center justify-center overflow-hidden transition-colors duration-500 ease-in-out pb-60"
                 style={{ backgroundColor: bgDarkness }}
             >
-                {/* Fancy shapes at the bottom of the first section */}
                 <motion.div
                     className="absolute bottom-10 left-10 w-12 h-12 bg-purple-400 rounded-full"
                     variants={fancyShapesVariants}
                     initial="initial"
                     animate="animate"
+                    style={{ willChange: "transform" }}
                 />
                 <motion.div
                     className="absolute bottom-10 right-20 w-16 h-16 bg-green-400 rounded-lg"
                     variants={fancyShapesVariants}
                     initial="initial"
                     animate="animate"
+                    style={{ willChange: "transform" }}
                 />
                 <motion.div
                     className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-10 h-10 bg-yellow-400 rounded-full"
                     variants={fancyShapesVariants}
                     initial="initial"
                     animate="animate"
+                    style={{ willChange: "transform" }}
                 />
-
                 <motion.h2
                     className="text-5xl font-bold mb-12 z-10"
                     initial={{ opacity: 0, y: 50 }}
@@ -224,56 +111,25 @@ const WhoWeAre: React.FC = () => {
                     Кои сме ние?
                 </motion.h2>
 
-                <div className="relative w-full max-w-4xl flex justify-center items-center z-10">
-                    <button
-                        className="absolute left-0 text-4xl bg-white text-red-500 p-4 rounded-full z-20 max-[930px]:ml-5"
-                        onClick={() => paginate(-1)}
-                        aria-label="Previous Image"
-                    >
-                        <FontAwesomeIcon icon={faChevronLeft} />
-                    </button>
+                <ImageCarousel
+                    images={images}
+                    currentImageIndex={imageIndex}
+                    paginate={paginate}
+                    direction={direction}
+                    inView={inViewFirst}
+                />
 
-                    <div className="relative w-[300px] h-[300px]">
-                        <AnimatePresence initial={false} custom={direction}>
-                            <motion.div
-                                key={images[currentImageIndex].id}
-                                className="absolute w-full h-full"
-                                custom={direction}
-                                variants={variants}
-                                initial="enter"
-                                animate={inViewFirst ? "center" : "enter"}
-                                exit="exit"
-                                style={{ position: "absolute", top: 0, left: 0 }}
-                            >
-                                <img
-                                    src={images[currentImageIndex].src}
-                                    alt={images[currentImageIndex].alt}
-                                    className="w-full h-full object-cover rounded-lg p-5"
-                                />
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-
-                    <button
-                        className="absolute right-0 text-4xl bg-white text-red-500 p-4 rounded-full z-20 max-[930px]:mr-5"
-                        onClick={() => paginate(1)}
-                        aria-label="Next Image"
-                    >
-                        <FontAwesomeIcon icon={faChevronRight} />
-                    </button>
-                </div>
-
-                <div className="relative mt-8 max-w-3xl w-full z-10">
+                <div className="relative mt-8 max-w-3xl w-full z-10 px-5">
                     <AnimatePresence mode="wait">
                         <motion.div
-                            key={images[currentImageIndex].id}
+                            key={images[imageIndex].id}
                             variants={descriptionVariants}
                             initial="hidden"
                             animate={inViewFirst ? "visible" : "hidden"}
                             exit="exit"
-                            className="bg-white text-red-500 p-6 rounded-lg shadow-lg border-2 border-red-500 text-lg text-center max-[820px]:mx-5"
+                            className="bg-white text-red-500 p-6 rounded-lg shadow-lg border-2 border-red-500 text-lg text-center"
                         >
-                            {images[currentImageIndex].description}
+                            {images[imageIndex].description}
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -285,26 +141,27 @@ const WhoWeAre: React.FC = () => {
                 className="relative text-white py-20 flex flex-col items-center justify-center overflow-hidden transition-colors duration-500 ease-in-out min-h-[100vh]"
                 style={{ backgroundColor: bgDarkness }}
             >
-                {/* Fancy shapes at the top of the second section */}
                 <motion.div
                     className="absolute top-10 left-10 w-14 h-14 bg-red-400 rounded-full"
                     variants={fancyShapesVariants}
                     initial="initial"
                     animate="animate"
+                    style={{ willChange: "transform" }}
                 />
                 <motion.div
                     className="absolute top-10 right-20 w-20 h-20 bg-blue-400 rounded-lg"
                     variants={fancyShapesVariants}
                     initial="initial"
                     animate="animate"
+                    style={{ willChange: "transform" }}
                 />
                 <motion.div
                     className="absolute top-20 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-pink-400 rounded-full"
                     variants={fancyShapesVariants}
                     initial="initial"
                     animate="animate"
+                    style={{ willChange: "transform" }}
                 />
-
                 <motion.h2
                     className="text-5xl font-bold mb-8 text-center"
                     initial={{ opacity: 0, y: -50 }}
