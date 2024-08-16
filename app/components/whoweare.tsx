@@ -287,7 +287,7 @@ const WhoWeAre: React.FC = () => {
                                 >
                                     <FontAwesomeIcon icon={faTimes} />
                                 </button>
-                                <YouTube videoId="VIDEO_ID_HERE" opts={opts} className="w-full max-w-4xl rounded-lg" />
+                                <YouTube videoId="wTNlWQP6Jtk" opts={opts} className="w-full max-w-4xl rounded-lg" />
                             </div>
                         </motion.div>
                     )}
