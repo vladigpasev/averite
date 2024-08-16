@@ -2,21 +2,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import { db } from '@/lib/firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import Link from 'next/link';
 
-// Types
-interface FormState {
-  name: string;
-  superPowers: string;
-  about: string;
-}
-
-interface CartoonResponse {
-  data: {
-    image_url: string;
-  };
-}
-
-const defaultFormState: FormState = {
+const defaultFormState = {
   name: '',
   superPowers: '',
   about: '',
@@ -25,16 +15,21 @@ const defaultFormState: FormState = {
 const JoinUs: React.FC = () => {
   const [cartoonImage, setCartoonImage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [formState, setFormState] = useState<FormState>(defaultFormState);
+  const [formState, setFormState] = useState(defaultFormState);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [cameraVisible, setCameraVisible] = useState<boolean>(true);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   useEffect(() => {
     const savedCartoonImage = localStorage.getItem('cartoonImage');
-    if (savedCartoonImage) {
+    const savedFormState = localStorage.getItem('formState');
+
+    if (savedCartoonImage && savedFormState) {
       setCartoonImage(savedCartoonImage);
+      setFormState(JSON.parse(savedFormState));
       setCameraVisible(false);
+      setIsSubmitted(true);
     } else {
       startCamera();
     }
@@ -75,7 +70,7 @@ const JoinUs: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post<CartoonResponse>(
+      const response = await axios.post(
         'https://cartoon-yourself.p.rapidapi.com/facebody/api/portrait-animation/portrait-animation',
         formData,
         {
@@ -111,7 +106,10 @@ const JoinUs: React.FC = () => {
 
   const handleRetake = () => {
     localStorage.removeItem('cartoonImage');
+    localStorage.removeItem('formState');
     setCartoonImage(null);
+    setFormState(defaultFormState);
+    setIsSubmitted(false);
     setCameraVisible(true);
     startCamera();
   };
@@ -124,6 +122,28 @@ const JoinUs: React.FC = () => {
     }));
   };
 
+  const saveDataToFirestore = async (data: any) => {
+    try {
+      const docRef = await addDoc(collection(db, 'superheroes'), data);
+      console.log('Document written with ID: ', docRef.id);
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const userData = {
+      name: formState.name,
+      superPowers: formState.superPowers,
+      about: formState.about,
+      cartoonImage: cartoonImage,
+    };
+
+    await saveDataToFirestore(userData);
+    localStorage.setItem('formState', JSON.stringify(userData));
+    setIsSubmitted(true);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
       <motion.div
@@ -132,8 +152,8 @@ const JoinUs: React.FC = () => {
         transition={{ duration: 0.5 }}
         className="text-center mb-8"
       >
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Блог - Стани част от нас!</h1>
-        <p className="text-gray-600">Въведи своите суперсили и направи снимка!</p>
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">Стани част от нас!</h1>
+        <p className="text-gray-600">Снимай се и се регистрирай, за да станеш част от нас и да можеш да участваш в нашия блог!</p>
       </motion.div>
 
       <div className="w-full max-w-4xl flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-8">
@@ -174,47 +194,79 @@ const JoinUs: React.FC = () => {
               <img src={cartoonImage} alt="Cartoonized" className="rounded-lg w-full h-full object-cover" />
             </div>
 
-            <div className="mt-4">
-              <label className="block text-gray-700">Име:</label>
-              <input
-                type="text"
-                name="name"
-                value={formState.name}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-lg"
-                placeholder="Вашето име"
-              />
-            </div>
-            <div className="mt-4">
-              <label className="block text-gray-700">Супер сили:</label>
-              <input
-                type="text"
-                name="superPowers"
-                value={formState.superPowers}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-lg"
-                placeholder="Вашите супер сили"
-              />
-            </div>
-            <div className="mt-4">
-              <label className="block text-gray-700">Малко за мен:</label>
-              <textarea
-                name="about"
-                value={formState.about}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-lg"
-                placeholder="Разкажете ни нещо за себе си"
-              ></textarea>
-            </div>
+            {isSubmitted ? (
+              <div className="mt-4">
+                <h3 className="text-gray-700 text-xl font-semibold">Име:</h3>
+                <p>{formState.name}</p>
+                <h3 className="text-gray-700 text-xl font-semibold">Супер сили:</h3>
+                <p>{formState.superPowers}</p>
+                <h3 className="text-gray-700 text-xl font-semibold">Малко за мен:</h3>
+                <p>{formState.about}</p>
 
-            <div className="mt-4">
-              <button
-                onClick={handleRetake}
-                className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
-              >
-                Retake Photo
-              </button>
-            </div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Link
+                    href="/blog"
+                    className="mt-4 inline-block bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600"
+                  >
+                    Виж другите
+                  </Link>
+                </motion.div>
+              </div>
+            ) : (
+              <div>
+                <div className="mt-4">
+                  <label className="block text-gray-700">Име:</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formState.name}
+                    onChange={handleChange}
+                    className="w-full mt-2 p-2 border rounded-lg"
+                    placeholder="Вашето име"
+                  />
+                </div>
+                <div className="mt-4">
+                  <label className="block text-gray-700">Супер сили:</label>
+                  <input
+                    type="text"
+                    name="superPowers"
+                    value={formState.superPowers}
+                    onChange={handleChange}
+                    className="w-full mt-2 p-2 border rounded-lg"
+                    placeholder="Вашите супер сили"
+                  />
+                </div>
+                <div className="mt-4">
+                  <label className="block text-gray-700">Малко за мен:</label>
+                  <textarea
+                    name="about"
+                    value={formState.about}
+                    onChange={handleChange}
+                    className="w-full mt-2 p-2 border rounded-lg"
+                    placeholder="Разкажете ни нещо за себе си"
+                  ></textarea>
+                </div>
+
+                <div className="mt-4">
+                  <button
+                    onClick={handleSubmit}
+                    className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600"
+                  >
+                    Запиши
+                  </button>
+                  <button
+                    onClick={handleRetake}
+                    className="ml-4 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
+                  >
+                    Retake Photo
+                  </button>
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </div>
