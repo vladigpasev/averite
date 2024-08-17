@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Jura } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/navbar";
+import Footer from "./components/footer";
 
 const jura = Jura({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body className={jura.className}>
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );

@@ -2,6 +2,7 @@ import React from 'react'
 import Hero from './components/hero'
 import WhoWeAre from './components/whoweare'
 import JoinUs from './components/joinus'
+import Footer from './components/footer'
 
 function Home() {
   return (
@@ -9,6 +10,7 @@ function Home() {
       <Hero />
       <WhoWeAre />
       <JoinUs />
+      
     </div>
   )
 }

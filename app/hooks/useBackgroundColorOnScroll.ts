@@ -20,7 +20,7 @@ const useBackgroundColorOnScroll = (
                         1,
                         (scrollAmount - scrollThreshold) / (sectionHeight / 2)
                     );
-                    const newColor = `rgb(${Math.max(0, 213 - darkeningFactor * 213)}, ${Math.max(0, 38 - darkeningFactor * 38)}, ${Math.max(0, 33 - darkeningFactor * 33)})`;
+                    const newColor = `rgb(${Math.max(0, 241 - darkeningFactor * 241)}, ${Math.max(0, 242 - darkeningFactor * 242)}, ${Math.max(0, 235 - darkeningFactor * 235)})`;
                     setBgColor(newColor);
                 } else {
                     setBgColor(initialColor);
