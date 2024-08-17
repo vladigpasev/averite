@@ -71,8 +71,7 @@ const WhoWeAre: React.FC = () => {
     const imageIndex = (page + images.length) % images.length;
 
     const opts = {
-        height: '360',
-        width: '640',
+        width: '100%',
         playerVars: {
             autoplay: 1,
         },
@@ -273,13 +272,13 @@ const WhoWeAre: React.FC = () => {
                     <AnimatePresence>
                         {showVideo && (
                             <motion.div
-                                className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center"
+                                className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center p-4"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                                 transition={{ duration: 0.5 }}
                             >
-                                <div className="relative">
+                                <div className="relative w-full max-w-4xl">
                                     <button
                                         className="absolute top-5 right-5 text-white text-3xl z-50"
                                         onClick={() => setShowVideo(false)}
@@ -287,7 +286,9 @@ const WhoWeAre: React.FC = () => {
                                     >
                                         <FontAwesomeIcon icon={faTimes} />
                                     </button>
-                                    <YouTube videoId="wTNlWQP6Jtk" opts={opts} className="w-full max-w-4xl rounded-lg" />
+                                    <div className="relative w-full h-0 pb-[56.25%]">
+                                        <YouTube videoId="gUE1iud8_yo" opts={opts} className="absolute top-0 left-0 w-full h-full rounded-lg" />
+                                    </div>
                                 </div>
                             </motion.div>
                         )}

@@ -54,12 +54,14 @@ const TextSection: React.FC = () => {
         transition={{ duration: 0.8 }}
         className="mt-10 flex"
       >
-        <button
+        <a
           type="button"
+          href="https://issuu.com/averite/docs/cover"
+          target="_blank"
           className="cursor-pointer rounded-full bg-gray-600 hover:bg-red-600 px-7 py-5 text-white font-bold text-lg transition-colors duration-300"
         >
-          НАШАТА ИСТОРИЯ
-        </button>
+          ВИЖ КОМИКС
+        </a>
       </motion.div>
     </div>
   );

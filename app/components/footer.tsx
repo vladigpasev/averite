@@ -39,16 +39,16 @@ const Footer: React.FC = () => {
                     </p>
 
                     <div className="flex justify-center space-x-8 mb-8">
-                        <a href="#" className="hover:underline">
+                        <a href="/" className="hover:underline">
                             Начало
                         </a>
-                        <a href="#" className="hover:underline">
+                        <a href="#whoweare" className="hover:underline">
                             За нас
                         </a>
-                        <a href="#" className="hover:underline">
+                        <a href="/blog" className="hover:underline">
                             Блог
                         </a>
-                        <a href="#" className="hover:underline">
+                        <a href="#footer" className="hover:underline">
                             Контакти
                         </a>
                     </div>

@@ -175,7 +175,7 @@ const JoinUs: React.FC = () => {
                 className="mt-4 bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600"
                 disabled={loading}
               >
-                {loading ? 'Processing...' : 'Снимай и Cartoonize'}
+                {loading ? 'Зареждане...' : 'Стани част от нас!'}
               </button>
               <canvas ref={canvasRef} className="hidden"></canvas>
             </motion.div>

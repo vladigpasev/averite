@@ -45,7 +45,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ items, isOpen, onItemClick }) =
                     </li>
                 ))}
                 <li>
-                    <a href='https://issuu.com/averite/docs/1' target='_blank'>
+                    <a href='https://issuu.com/averite/docs/cover' target='_blank'>
                         <div className='cursor-pointer rounded-full bg-gray-600 hover:bg-red-600 px-7 py-5 text-white font-bold text-lg transition-colors duration-300'>
                             ВИЖ КОМИКС
                         </div>
@@ -124,7 +124,7 @@ const Navbar: React.FC = () => {
                     <MenuItems items={menuItems} onItemClick={handleMenuItemClick} />
                 </div>
                 <div className='pt-10 hidden xl:block'>
-                    <a href='https://issuu.com/averite/docs/1' target='_blank'>
+                    <a href='https://issuu.com/averite/docs/cover' target='_blank'>
                         <div className='cursor-pointer rounded-full bg-gray-600 hover:bg-red-600 px-7 py-5 text-white font-bold text-lg transition-colors duration-300'>
                             ВИЖ КОМИКС
                         </div>
