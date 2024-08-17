@@ -70,8 +70,8 @@ const ImageSection: React.FC = () => {
     <motion.div {...rotateMotion} className="relative z-10">
       <div className="absolute lg:w-[400px] lg:h-[400px] md:w-[350px] md:h-[350px] sm:w-[250px] sm:h-[250px] bg-[#d52621] rounded-full bottom-[-100px] left-[-100px] z-[-1] transform rotate-45"></div>
       <img
-        src="https://cdn.discordapp.com/attachments/1270389492628459571/1273756825677991998/Untitled_image.jpeg?ex=66c06ebc&is=66bf1d3c&hm=f13d26b43f5e75ed995ea79c7a2a69a6b8d4361ecbf0e3a0c13f0efe7abd1a81&"
-        alt="Our Story Image"
+        src="/cover.jpeg"
+        alt="Our Comics Cover"
         className="rounded-lg shadow-2xl transform rotate-6 hover:rotate-0 transition-transform duration-500 ease-in-out"
       />
     </motion.div>
