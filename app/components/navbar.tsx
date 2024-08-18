@@ -37,7 +37,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, onItemClick }) => {
 
 const MobileMenu: React.FC<MobileMenuProps> = ({ items, isOpen, onItemClick }) => {
     return (
-        <div className={`xl:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
+        <div className={`min-[1420px]:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96' : 'max-h-0'}`}>
             <ul className='flex flex-col items-center gap-4 py-4 font-medium text-gray-600 text-lg'>
                 {items.map((item, index) => (
                     <li key={index} className='cursor-pointer' onClick={() => onItemClick(item.link)}>
@@ -120,17 +120,17 @@ const Navbar: React.FC = () => {
                         <img src="/logo.png" alt="Logo" />
                     </div>
                 </a>
-                <div className='pt-10 pr-20 hidden xl:block'>
+                <div className='pt-10 pr-20 hidden min-[1420px]:block'>
                     <MenuItems items={menuItems} onItemClick={handleMenuItemClick} />
                 </div>
-                <div className='pt-10 hidden xl:block'>
+                <div className='pt-10 hidden min-[1420px]:block'>
                     <a href='https://issuu.com/averite/docs/cover' target='_blank'>
                         <div className='cursor-pointer rounded-full bg-gray-600 hover:bg-red-600 px-7 py-5 text-white font-bold text-lg transition-colors duration-300'>
                             ВИЖ КОМИКС
                         </div>
                     </a>
                 </div>
-                <div className='pt-10 block xl:hidden'>
+                <div className='pt-10 block min-[1420px]:hidden'>
                     <button
                         className='cursor-pointer border border-gray-300 rounded-lg px-4 py-2 text-gray-600'
                         onClick={toggleMenu}
