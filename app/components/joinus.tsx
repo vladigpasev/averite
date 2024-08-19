@@ -262,7 +262,7 @@ const JoinUs: React.FC = () => {
                     onClick={handleRetake}
                     className="ml-4 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
                   >
-                    Retake Photo
+                    Повтори
                   </button>
                 </div>
               </div>
